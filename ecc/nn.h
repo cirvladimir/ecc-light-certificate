@@ -33,7 +33,7 @@
 #if defined (SECP192K1) || defined (SECP192R1)
 #define KEY_BIT_LEN 192
 #else
-#if defined (SECP256K1)
+#if defined (SECP256K1) || defined (SECP256R1)
 #define KEY_BIT_LEN 256
 #else
 #define KEY_BIT_LEN 128
