@@ -444,7 +444,6 @@ NN_ModMultOpt(NN_DIGIT * a, NN_DIGIT * b, NN_DIGIT * c, NN_DIGIT * d, NN_DIGIT *
 
   pt1 = &(t1[KEYDIGITS]);
   len_t2 = 2 * KEYDIGITS;
-
   /*
    * The "Curve-Specific Optimizations" algorithm in
    * "Comparing Elliptic Curve Cryptography and RSA on 8-bit CPUs"
@@ -455,7 +454,12 @@ NN_ModMultOpt(NN_DIGIT * a, NN_DIGIT * b, NN_DIGIT * c, NN_DIGIT * d, NN_DIGIT *
     len_t1 = len_t2;
     len_t2 = omega_mul(t2, pt1, omega, len_t2);
     memset(pt1, 0, len_t1*NN_DIGIT_LEN);
-    NN_Add(t1, t2, t1, MAX(KEYDIGITS,len_t2)+1);
+    NN_UINT addition_length = MAX(KEYDIGITS, len_t2);
+    NN_DIGIT carry = NN_Add(t1, t2, t1, addition_length);
+    if (carry != 0) {
+      len_t2 = addition_length + 1;
+      t1[addition_length] = carry;
+    }
   }
 
   while(NN_Cmp(t1, d, digits) > 0) {
@@ -553,7 +557,12 @@ NN_ModSqrOpt(NN_DIGIT * a, NN_DIGIT * b, NN_DIGIT * d, NN_DIGIT * omega, NN_UINT
     len_t1 = len_t2;
     len_t2 = omega_mul(t2, pt1, omega, len_t2);
     memset(pt1, 0, len_t1*NN_DIGIT_LEN);
-    NN_Add(t1, t2, t1, MAX(KEYDIGITS,len_t2)+1);
+    NN_UINT addition_length = MAX(KEYDIGITS, len_t2);
+    NN_DIGIT carry = NN_Add(t1, t2, t1, addition_length);
+    if (carry != 0) {
+      len_t2 = addition_length + 1;
+      t1[addition_length] = carry;
+    }
   }
 
   while(NN_Cmp(t1, d, digits) > 0) {
